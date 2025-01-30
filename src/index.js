@@ -60,22 +60,47 @@ app.post("/register", async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Verificar si el usuario ya existe
+    // Input validation
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ message: "Username and password are required" });
+    }
+
+    // Check if user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: "Username already exists" });
     }
 
-    // Crear un nuevo usuario
-    const user = new User({ username, password });
+    // Create new user
+    const user = new User({
+      username,
+      password,
+      role: "user", // Set default role
+    });
+
+    // Save user to database
     await user.save();
 
-    // Generar un token JWT
-    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
-    res.json({ token });
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, username: user.username },
+      SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+
+    // Return success response
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+    });
   } catch (error) {
-    console.error("Registration failed", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Registration error:", error);
+    res.status(500).json({
+      message: "Registration failed",
+      error: error.message,
+    });
   }
 });
 
