@@ -33,8 +33,8 @@ const activeRooms = new Set([
 
 const io = new Server(server, {
   cors: {
-    // origin: "https://chatmundojob.onrender.com",
-    origin: "http://localhost:5173",
+    origin: "https://plataforma-mundojob-frontend.onrender.com",
+    // origin: "http://localhost:5173",
     methods: ["GET", "POST"],
     credentials: true,
     allowedHeaders: ["Content-Type"],
@@ -46,8 +46,8 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(
   cors({
-    // origin: "https://chatmundojob.onrender.com",
-    origin: "http://localhost:5173",
+    origin: "https://plataforma-mundojob-frontend.onrender.com",
+    // origin: "http://localhost:5173",
   })
 );
 
