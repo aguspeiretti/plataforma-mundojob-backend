@@ -57,49 +57,44 @@ app.get("/api/rooms", (req, res) => {
 
 // Endpoint de registro
 app.post("/register", async (req, res) => {
+  console.log("Received registration request:", {
+    username: req.body.username,
+    // No logueamos la contraseña por seguridad
+  });
+
   const { username, password } = req.body;
 
   try {
-    // Input validation
-    if (!username || !password) {
-      return res
-        .status(400)
-        .json({ message: "Username and password are required" });
-    }
-
-    // Check if user already exists
+    // Verificar si el usuario ya existe
+    console.log("Checking if user exists...");
     const existingUser = await User.findOne({ username });
     if (existingUser) {
+      console.log("User already exists");
       return res.status(400).json({ message: "Username already exists" });
     }
 
-    // Create new user
-    const user = new User({
-      username,
-      password,
-      role: "user", // Set default role
-    });
+    console.log("Creating new user...");
+    // Crear un nuevo usuario
+    const user = new User({ username, password });
 
-    // Save user to database
+    console.log("Saving user...");
     await user.save();
+    console.log("User saved successfully");
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user._id, username: user.username },
-      SECRET_KEY,
-      { expiresIn: "1h" }
-    );
+    // Generar un token JWT
+    console.log("Generating token...");
+    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
+    console.log("Registration complete");
 
-    // Return success response
-    res.status(201).json({
-      message: "User registered successfully",
-      token,
-    });
+    res.json({ token });
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error("Registration error details:", {
+      message: error.message,
+      stack: error.stack,
+    });
     res.status(500).json({
-      message: "Registration failed",
-      error: error.message,
+      message: "Internal server error",
+      details: error.message,
     });
   }
 });
