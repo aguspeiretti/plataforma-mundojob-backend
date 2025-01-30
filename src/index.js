@@ -231,14 +231,6 @@ io.on("connection", (socket) => {
   });
 });
 
-const path = require("path");
-
-// Por esto
-app.use(express.static(path.join(__dirname, "../../client/dist")));
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/dist", "index.html"));
-});
-
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
