@@ -51,6 +51,10 @@ app.use(
   })
 );
 
+app.get("/api/rooms", (req, res) => {
+  res.json(Array.from(activeRooms));
+});
+
 // Endpoint de registro
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
@@ -98,10 +102,6 @@ app.post("/login", async (req, res) => {
     console.error("Login failed", error);
     res.status(500).json({ message: "Internal server error" });
   }
-});
-
-app.get("/api/rooms", (req, res) => {
-  res.json(Array.from(activeRooms));
 });
 
 app.get("/api/messages/:room", async (req, res) => {
@@ -233,14 +233,10 @@ io.on("connection", (socket) => {
 
 const path = require("path");
 
-// Sirve archivos estáticos desde el frontend
-app.use(express.static(path.join(__dirname, "frontend/dist"))); // Vite
-// app.use(express.static(path.join(__dirname, "frontend/build"))); // CRA
-
-// Maneja todas las rutas y redirige al frontend
+// Por esto
+app.use(express.static(path.join(__dirname, "../../client/dist")));
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend/dist", "index.html")); // Vite
-  // res.sendFile(path.join(__dirname, "frontend/build", "index.html")); // CRA
+  res.sendFile(path.join(__dirname, "../../client/dist", "index.html"));
 });
 
 server.listen(PORT, () => {
