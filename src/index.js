@@ -231,6 +231,18 @@ io.on("connection", (socket) => {
   });
 });
 
+const path = require("path");
+
+// Sirve archivos estáticos desde el frontend
+app.use(express.static(path.join(__dirname, "frontend/dist"))); // Vite
+// app.use(express.static(path.join(__dirname, "frontend/build"))); // CRA
+
+// Maneja todas las rutas y redirige al frontend
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend/dist", "index.html")); // Vite
+  // res.sendFile(path.join(__dirname, "frontend/build", "index.html")); // CRA
+});
+
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
